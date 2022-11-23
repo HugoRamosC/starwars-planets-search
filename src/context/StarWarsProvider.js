@@ -1,31 +1,33 @@
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import fetchPlanets from '../services/fetchPlanets';
 import StarWarsContext from './StarWarsContext';
 
 export default function StarWarsProvider({ children }) {
   const [planets, setPlanets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filtered, setFiltered] = useState({});
+  const [search, setSearch] = useState([]);
 
   const getPlanets = async () => {
     const response = await fetchPlanets();
     setPlanets(response);
   };
-  // useEffect(() => {
-  //   fetchPlanets().then((p) => {
-  //     console.log(p);
-  //     setPlanets(p);
-  //   });
-  // }, []);
-  // console.log(planets);
 
-  // const values = useMemo(() => ({ planets }), [planets]);
+  useEffect(() => {
+    getPlanets().then(() => setLoading(false));
+  }, []);
 
   const values = {
-    planets,
     getPlanets,
+    planets,
+    setPlanets,
     loading,
     setLoading,
+    filtered,
+    setFiltered,
+    search,
+    setSearch,
   };
 
   return (
@@ -36,5 +38,5 @@ export default function StarWarsProvider({ children }) {
 }
 
 StarWarsProvider.propTypes = {
-  children: PropTypes.shape.isRequired,
+  children: PropTypes.shape().isRequired,
 };
