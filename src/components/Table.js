@@ -25,7 +25,7 @@ export default function Table() {
           </thead>
           <tbody>
             {
-              search.length === 0 ? (<p>Nada encontrado</p>)
+              search.length === 0 ? (<tr><td>Nada encontrado</td></tr>)
                 : (
                   search.map((p) => (
                     <tr key={ p.name }>
