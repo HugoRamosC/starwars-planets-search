@@ -1,5 +1,4 @@
 function filterPlanets(arr, obj) {
-  // if (obj = {}) {
   const filteredPlanets = arr
     .filter((p) => p.name.toUpperCase().includes(obj.name.toUpperCase()));
 

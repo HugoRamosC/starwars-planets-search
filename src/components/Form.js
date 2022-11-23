@@ -5,8 +5,8 @@ import filterPlanets from '../services/filterPlanets';
 export default function Form() {
   const {
     planets,
-    filtered,
-    setFiltered,
+    filteredName,
+    setFilteredName,
     setSearch,
   } = useContext(StarWarsContext);
 
@@ -16,6 +16,7 @@ export default function Form() {
     comparison: 'maior que',
     value: 0,
   });
+  const [filters, setFilters] = useState([]);
 
   const handleChange = ({ target }) => {
     setInputs({ ...inputs, [target.name]: target.value });
@@ -23,83 +24,100 @@ export default function Form() {
 
   const handleClick = () => {
     setSearch(filterPlanets(planets, inputs));
+    const arrFilters = [...filters, inputs];
+    setFilters(arrFilters);
+  };
+
+  const handleClearFilter = ({ target }) => {
+    console.log(target.parentNode);
+    const newArr = filters.filter((f) => f.column !== target.parentNode.id);
+    setFilters(newArr);
   };
 
   useEffect(() => {
-    setFiltered(inputs);
+    setFilteredName(inputs);
   }, [inputs]);// usado para garantir que as alterações do Input estejam salvas.
 
   useEffect(() => {
     setSearch(planets);
-    // Object.values(filtered).length > 0
+    // Object.values(filteredName).length > 0
     if (inputs.name !== '') {
-      setSearch(filterPlanets(planets, filtered));
+      setSearch(filterPlanets(planets, filteredName));
     }
-  }, [planets, filtered]);
+  }, [planets]);
 
   return (
-    <form>
-      Filtros:
-      <label htmlFor="name">
-        Nome:
-        <input
-          data-testid="name-filter"
-          type="text"
-          name="name"
-          value={ inputs.name }
-          id="name"
-          onChange={ handleChange }
-        />
-      </label>
-      <label htmlFor="column">
-        Coluna:
-        <select
-          data-testid="column-filter"
-          type="text"
-          name="column"
-          id="column"
-          value={ inputs.column }
-          onChange={ handleChange }
+    <>
+      <form>
+        Filtros:
+        <label htmlFor="name">
+          Nome:
+          <input
+            data-testid="name-filter"
+            type="text"
+            name="name"
+            value={ inputs.name }
+            id="name"
+            onChange={ handleChange }
+          />
+        </label>
+        <label htmlFor="column">
+          Coluna:
+          <select
+            data-testid="column-filter"
+            type="text"
+            name="column"
+            id="column"
+            value={ inputs.column }
+            onChange={ handleChange }
+          >
+            <option value="population">population</option>
+            <option value="orbital_period">orbital_period</option>
+            <option value="diameter">diameter</option>
+            <option value="rotation_period">rotation_period</option>
+            <option value="surface_water">surface_water</option>
+          </select>
+        </label>
+        <label htmlFor="comparison">
+          Comparação:
+          <select
+            data-testid="comparison-filter"
+            name="comparison"
+            id="comparison"
+            value={ inputs.comparison }
+            onChange={ handleChange }
+          >
+            <option value="maior que">maior que</option>
+            <option value="menor que">menor que</option>
+            <option value="igual a">igual a</option>
+          </select>
+        </label>
+        <label htmlFor="value">
+          Número:
+          <input
+            data-testid="value-filter"
+            type="number"
+            name="value"
+            id="value"
+            value={ inputs.value }
+            onChange={ handleChange }
+          />
+        </label>
+        <button
+          data-testid="button-filter"
+          type="button"
+          onClick={ handleClick }
         >
-          <option value="population">population</option>
-          <option value="orbital_period">orbital_period</option>
-          <option value="diameter">diameter</option>
-          <option value="rotation_period">rotation_period</option>
-          <option value="surface_water">surface_water</option>
-        </select>
-      </label>
-      <label htmlFor="comparison">
-        Comparação:
-        <select
-          data-testid="comparison-filter"
-          name="comparison"
-          id="comparison"
-          value={ inputs.comparison }
-          onChange={ handleChange }
-        >
-          <option value="maior que">maior que</option>
-          <option value="menor que">menor que</option>
-          <option value="igual a">igual a</option>
-        </select>
-      </label>
-      <label htmlFor="value">
-        Número:
-        <input
-          data-testid="value-filter"
-          type="number"
-          name="value"
-          id="value"
-          value={ inputs.value }
-          onChange={ handleChange }
-        />
-      </label>
-      <button
-        data-testid="button-filter"
-        type="button"
-        onClick={ handleClick }
-      >
-        Filtrar
-      </button>
-    </form>
+          Filtrar
+        </button>
+      </form>
+      { filters.length > 0
+      && filters.map((f) => (
+        <div key={ f.column } id={ f.column }>
+          <p>{ `${f.column} ${f.comparison} ${f.value}` }</p>
+          <button type="button" onClick={ handleClearFilter }>❌</button>
+        </div>
+      ))}
+    </>
   );
 }

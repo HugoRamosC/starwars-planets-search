@@ -6,7 +6,7 @@ import StarWarsContext from './StarWarsContext';
 export default function StarWarsProvider({ children }) {
   const [planets, setPlanets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filtered, setFiltered] = useState({});
+  const [filteredName, setFilteredName] = useState({});
   const [search, setSearch] = useState([]);
 
   const getPlanets = async () => {
@@ -24,8 +24,8 @@ export default function StarWarsProvider({ children }) {
     setPlanets,
     loading,
     setLoading,
-    filtered,
-    setFiltered,
+    filteredName,
+    setFilteredName,
     search,
     setSearch,
   };
