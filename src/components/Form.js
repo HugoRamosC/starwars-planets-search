@@ -24,6 +24,8 @@ export default function Form() {
     'rotation_period',
     'surface_water',
   ]);
+  const [columns] = useState(columnOptions);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   // Preenche search e filteredByName com todos os planetas no carregamento da página
   useEffect(() => {
@@ -44,7 +46,7 @@ export default function Form() {
     }
   }, [inputs.name]);
 
-  const handleFilterClick = () => { // salva os inputs em um array para rodar o filtro por número & dispara o useEffect abaixo
+  const handleAplyFilter = () => { // salva os inputs em um array para rodar o filtro por número & dispara o useEffect abaixo
     const arrFilters = [...filters, inputs];
     setFilters(arrFilters);
   };
@@ -54,12 +56,31 @@ export default function Form() {
     setFilters(newArr);
   };
 
+  const handleClearAllFilters = () => {
+    setColumnOptions(columns);
+    setFilters([]);
+    setIsDisabled(false);
+    setInputs({
+      name: '',
+      column: 'population',
+      comparison: 'maior que',
+      value: 0,
+    });
+  };
+
   const filterOptions = () => {
     if (filters.length !== 0) {
       const aplyedFilters = filters.map((f) => f.column);
-      const optionsFiltered = columnOptions.filter((opt) => !aplyedFilters.includes(opt));
+      const optionsFiltered = columns.filter((opt) => !aplyedFilters.includes(opt));
       setColumnOptions(optionsFiltered);
-      setInputs({ ...inputs, column: optionsFiltered[0] });
+
+      if (optionsFiltered.length === 0) {
+        setInputs({ ...inputs, column: columns[0] });
+        setIsDisabled(true);
+      } else {
+        setInputs({ ...inputs, column: optionsFiltered[0] });
+        setIsDisabled(false);
+      }
     }
   };
 
@@ -126,16 +147,24 @@ export default function Form() {
         <button
           data-testid="button-filter"
           type="button"
-          onClick={ handleFilterClick }
+          onClick={ handleAplyFilter }
+          disabled={ isDisabled }
         >
           Filtrar
+        </button>
+        <button
+          data-testid="button-remove-filters"
+          type="button"
+          onClick={ handleClearAllFilters }
+        >
+          Remover Filtros
         </button>
       </form>
       { filters.length > 0
       && filters.map((f) => (
-        <div key={ f.column } id={ f.column }>
-          <p>{ `${f.column} ${f.comparison} ${f.value}` }</p>
+        <div key={ f.column } id={ f.column } data-testid="filter">
           <button type="button" onClick={ handleDeleteFilter }>❌</button>
+          <span>{ `${f.column} ${f.comparison} ${f.value}` }</span>
         </div>
       ))}
     </>
