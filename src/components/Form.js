@@ -17,6 +17,13 @@ export default function Form() {
   });
   const [filters, setFilters] = useState([]);
   const [filteredByName, setFilteredByName] = useState([]);
+  const [columnOptions, setColumnOptions] = useState([
+    'population',
+    'orbital_period',
+    'diameter',
+    'rotation_period',
+    'surface_water',
+  ]);
 
   // Preenche search e filteredByName com todos os planetas no carregamento da página
   useEffect(() => {
@@ -47,17 +54,19 @@ export default function Form() {
     setFilters(newArr);
   };
 
+  const filterOptions = () => {
+    if (filters.length !== 0) {
+      const aplyedFilters = filters.map((f) => f.column);
+      const optionsFiltered = columnOptions.filter((opt) => !aplyedFilters.includes(opt));
+      setColumnOptions(optionsFiltered);
+      setInputs({ ...inputs, column: optionsFiltered[0] });
+    }
+  };
+
   useEffect(() => { // atualiza o search (página) com os filtros por número
     setSearch(filterByNumber(filteredByName, filters));
+    filterOptions();
   }, [filters]);
-
-  const arrOption = [
-    'population',
-    'orbital_period',
-    'diameter',
-    'rotation_period',
-    'surface_water',
-  ];
 
   return (
     <>
@@ -84,7 +93,7 @@ export default function Form() {
             value={ inputs.column }
             onChange={ handleChange }
           >
-            {arrOption.map((opt, i) => (
+            {columnOptions.map((opt, i) => (
               <option key={ i } value={ opt }>{ opt }</option>
             ))}
           </select>
