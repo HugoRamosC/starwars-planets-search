@@ -1,12 +1,11 @@
 import React, { useContext, useState, useEffect } from 'react';
 import StarWarsContext from '../context/StarWarsContext';
-import filterPlanets from '../services/filterPlanets';
+import { filterByName, filterByNumber } from '../services/filterPlanets';
 
 export default function Form() {
   const {
     planets,
-    filteredName,
-    setFilteredName,
+    search,
     setSearch,
   } = useContext(StarWarsContext);
 
@@ -17,34 +16,48 @@ export default function Form() {
     value: 0,
   });
   const [filters, setFilters] = useState([]);
+  const [filteredByName, setFilteredByName] = useState([]);
+
+  // Preenche search e filteredByName com todos os planetas no carregamento da página
+  useEffect(() => {
+    setSearch(planets); // search que é renderizado
+    setFilteredByName(planets); // salva os planetas filtrados somente pelo nome
+  }, [planets]);
 
   const handleChange = ({ target }) => {
     setInputs({ ...inputs, [target.name]: target.value });
   };
 
-  const handleClick = () => {
-    setSearch(filterPlanets(planets, inputs));
+  useEffect(() => {
+    if (inputs.name !== '') { // atualiza os states com o filtro por nome
+      setSearch(filterByName(search, inputs));
+      setFilteredByName(filterByName(search, inputs));
+    } else { // atualiza o search filtrando somente pelo números (caso haja filtro de número), quando apaga o input nome
+      setSearch(filterByNumber(planets, filters));
+    }
+  }, [inputs.name]);
+
+  const handleFilterClick = () => { // salva os inputs em um array para rodar o filtro por número & dispara o useEffect abaixo
     const arrFilters = [...filters, inputs];
     setFilters(arrFilters);
   };
 
-  const handleClearFilter = ({ target }) => {
-    console.log(target.parentNode);
+  const handleDeleteFilter = ({ target }) => { // atualiza o array de filtro quando um deles é deletado & dispara o useEffect abaixo
     const newArr = filters.filter((f) => f.column !== target.parentNode.id);
     setFilters(newArr);
   };
 
-  useEffect(() => {
-    setFilteredName(inputs);
-  }, [inputs]);// usado para garantir que as alterações do Input estejam salvas.
+  useEffect(() => { // atualiza o search (página) com os filtros por número
+    setSearch(filterByNumber(filteredByName, filters));
+  }, [filters]);
 
-  useEffect(() => {
-    setSearch(planets);
-    // Object.values(filteredName).length > 0
-    if (inputs.name !== '') {
-      setSearch(filterPlanets(planets, filteredName));
-    }
-  }, [planets]);
+  const arrOption = [
+    'population',
+    'orbital_period',
+    'diameter',
+    'rotation_period',
+    'surface_water',
+  ];
 
   return (
     <>
@@ -71,11 +84,9 @@ export default function Form() {
             value={ inputs.column }
             onChange={ handleChange }
           >
-            <option value="population">population</option>
-            <option value="orbital_period">orbital_period</option>
-            <option value="diameter">diameter</option>
-            <option value="rotation_period">rotation_period</option>
-            <option value="surface_water">surface_water</option>
+            {arrOption.map((opt, i) => (
+              <option key={ i } value={ opt }>{ opt }</option>
+            ))}
           </select>
         </label>
         <label htmlFor="comparison">
@@ -106,7 +117,7 @@ export default function Form() {
         <button
           data-testid="button-filter"
           type="button"
-          onClick={ handleClick }
+          onClick={ handleFilterClick }
         >
           Filtrar
         </button>
@@ -115,7 +126,7 @@ export default function Form() {
       && filters.map((f) => (
         <div key={ f.column } id={ f.column }>
           <p>{ `${f.column} ${f.comparison} ${f.value}` }</p>
-          <button type="button" onClick={ handleClearFilter }>❌</button>
+          <button type="button" onClick={ handleDeleteFilter }>❌</button>
         </div>
       ))}
     </>
