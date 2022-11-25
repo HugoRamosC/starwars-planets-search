@@ -1,40 +1,46 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import StarWarsContext from '../context/StarWarsContext';
 import { filterByName, filterByNumber } from '../services/filterPlanets';
+import sortPlanets from '../services/sortPlanets';
+// import sortPlanets from '../services/sortPlanets';
 
 export default function Form() {
   const {
     planets,
     search,
     setSearch,
+    inputs,
+    setInputs,
+    filters,
+    setFilters,
+    filteredByName,
+    setFilteredByName,
+    isDisabled,
+    setIsDisabled,
+    columns,
+    columnOptions,
+    setColumnOptions,
+    order,
+    setOrder,
+    sequence,
+    setSequence,
   } = useContext(StarWarsContext);
 
-  const [inputs, setInputs] = useState({
-    name: '',
-    column: 'population',
-    comparison: 'maior que',
-    value: 0,
-  });
-  const [filters, setFilters] = useState([]);
-  const [filteredByName, setFilteredByName] = useState([]);
-  const [columnOptions, setColumnOptions] = useState([
-    'population',
-    'orbital_period',
-    'diameter',
-    'rotation_period',
-    'surface_water',
-  ]);
-  const [columns] = useState(columnOptions);
-  const [isDisabled, setIsDisabled] = useState(false);
+  const checkSelectOrder = document.querySelectorAll('input[name="sort"]');
 
   // Preenche search e filteredByName com todos os planetas no carregamento da página
   useEffect(() => {
     setSearch(planets); // search que é renderizado
     setFilteredByName(planets); // salva os planetas filtrados somente pelo nome
+    // setSequence(order);
   }, [planets]);
 
-  const handleChange = ({ target }) => {
+  const handleChangeFilter = ({ target }) => {
     setInputs({ ...inputs, [target.name]: target.value });
+  };
+
+  const handleChangeOrder = ({ target }) => {
+    setOrder({ ...order, [target.name]: target.value });
   };
 
   useEffect(() => {
@@ -46,20 +52,21 @@ export default function Form() {
     }
   }, [inputs.name]);
 
-  const handleAplyFilter = () => { // salva os inputs em um array para rodar o filtro por número & dispara o useEffect abaixo
+  const handleClickAplyFilter = () => { // salva os inputs em um array para rodar o filtro por número & dispara o useEffect abaixo
     const arrFilters = [...filters, inputs];
     setFilters(arrFilters);
   };
 
-  const handleDeleteFilter = ({ target }) => { // atualiza o array de filtro quando um deles é deletado & dispara o useEffect abaixo
+  const handleClickDeleteFilter = ({ target }) => { // atualiza o array de filtro quando um deles é deletado & dispara o useEffect abaixo
     const newArr = filters.filter((f) => f.column !== target.parentNode.id);
     setFilters(newArr);
   };
 
-  const handleClearAllFilters = () => {
+  const handleClickClearAllFilters = () => {
+    setFilteredByName(planets);
     setColumnOptions(columns);
-    setFilters([]);
     setIsDisabled(false);
+    setFilters([]);
     setInputs({
       name: '',
       column: 'population',
@@ -89,10 +96,21 @@ export default function Form() {
     filterOptions();
   }, [filters]);
 
+  const handleClickOrder = () => {
+    console.log('test sequence');
+    setSequence(order);
+  };
+
+  useEffect(() => {
+    setSearch(sortPlanets(search, order));
+  }, [sequence]);
+
   return (
     <>
       <form>
-        Filtros:
+        <br />
+        FILTROS:
+        <br />
         <label htmlFor="name">
           Nome:
           <input
@@ -101,7 +119,7 @@ export default function Form() {
             name="name"
             value={ inputs.name }
             id="name"
-            onChange={ handleChange }
+            onChange={ handleChangeFilter }
           />
         </label>
         <label htmlFor="column">
@@ -112,7 +130,7 @@ export default function Form() {
             name="column"
             id="column"
             value={ inputs.column }
-            onChange={ handleChange }
+            onChange={ handleChangeFilter }
           >
             {columnOptions.map((opt, i) => (
               <option key={ i } value={ opt }>{ opt }</option>
@@ -126,7 +144,7 @@ export default function Form() {
             name="comparison"
             id="comparison"
             value={ inputs.comparison }
-            onChange={ handleChange }
+            onChange={ handleChangeFilter }
           >
             <option value="maior que">maior que</option>
             <option value="menor que">menor que</option>
@@ -141,29 +159,80 @@ export default function Form() {
             name="value"
             id="value"
             value={ inputs.value }
-            onChange={ handleChange }
+            onChange={ handleChangeFilter }
           />
         </label>
+        <br />
         <button
           data-testid="button-filter"
           type="button"
-          onClick={ handleAplyFilter }
+          onClick={ handleClickAplyFilter }
           disabled={ isDisabled }
         >
           Filtrar
         </button>
+        <br />
+        <br />
+        ORDENAÇÃO:
+        <br />
+        <label htmlFor="column">
+          Coluna:
+          <select
+            data-testid="column-order"
+            type="text"
+            name="column"
+            id="column"
+            value={ order.column }
+            onChange={ handleChangeOrder }
+          >
+            {columnOptions.map((opt, i) => (
+              <option key={ i } value={ opt }>{ opt }</option>
+            ))}
+          </select>
+        </label>
+        <label htmlFor="ascendente">
+          <input
+            type="radio"
+            id="ascendente"
+            name="sort"
+            value="ASC"
+            onChange={ handleChangeOrder }
+          />
+          Ascendente
+        </label>
+        <label htmlFor="descendente">
+          <input
+            type="radio"
+            id="descendente"
+            name="sort"
+            value="DESC"
+            onChange={ handleChangeOrder }
+          />
+          Descendente
+        </label>
+        <br />
+        <button
+          data-testid="column-sort-button"
+          type="button"
+          onClick={ handleClickOrder }
+          disabled={ ![...checkSelectOrder].some((select) => select.checked === true) }
+        >
+          Ordenar
+        </button>
+        <br />
+        <br />
         <button
           data-testid="button-remove-filters"
           type="button"
-          onClick={ handleClearAllFilters }
+          onClick={ handleClickClearAllFilters }
         >
-          Remover Filtros
+          Limpar Filtros & Ordem
         </button>
       </form>
       { filters.length > 0
       && filters.map((f) => (
         <div key={ f.column } id={ f.column } data-testid="filter">
-          <button type="button" onClick={ handleDeleteFilter }>❌</button>
+          <button type="button" onClick={ handleClickDeleteFilter }>❌</button>
           <span>{ `${f.column} ${f.comparison} ${f.value}` }</span>
         </div>
       ))}

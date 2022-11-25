@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import StarWarsContext from '../context/StarWarsContext';
+// import sortPlanets from '../services/sortPlanets';
 
 export default function Table() {
   const {
@@ -7,6 +8,8 @@ export default function Table() {
     loading,
     search,
   } = useContext(StarWarsContext);
+
+  // const ordenedSearch = sortPlanets(search, sequence);
 
   return (
     loading ? (<p>Carregando...</p>)
@@ -29,7 +32,10 @@ export default function Table() {
                 : (
                   search.map((p) => (
                     <tr key={ p.name }>
-                      {Object.values(p).map((value, i) => <td key={ i }>{ value }</td>)}
+                      {Object.values(p).map((value, i) => (
+                        i === 0 ? <td key={ i } data-testid="planet-name">{ value }</td>
+                          : <td key={ i }>{ value }</td>
+                      ))}
                     </tr>
                   )))
             }
