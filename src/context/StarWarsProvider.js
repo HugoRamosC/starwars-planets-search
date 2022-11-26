@@ -27,9 +27,8 @@ export default function StarWarsProvider({ children }) {
   const [columns] = useState(columnOptions);
   const [order, setOrder] = useState({
     column: 'population',
-    sort: 'ASC',
+    sort: '',
   });
-  const [sequence, setSequence] = useState({});
 
   const getPlanets = async () => {
     const response = await fetchPlanets();
@@ -63,8 +62,6 @@ export default function StarWarsProvider({ children }) {
     setColumnOptions,
     order,
     setOrder,
-    sequence,
-    setSequence,
   };
 
   return (

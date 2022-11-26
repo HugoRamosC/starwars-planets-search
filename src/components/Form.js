@@ -1,8 +1,7 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import StarWarsContext from '../context/StarWarsContext';
 import { filterByName, filterByNumber } from '../services/filterPlanets';
 import sortPlanets from '../services/sortPlanets';
-// import sortPlanets from '../services/sortPlanets';
 
 export default function Form() {
   const {
@@ -22,9 +21,8 @@ export default function Form() {
     setColumnOptions,
     order,
     setOrder,
-    sequence,
-    setSequence,
   } = useContext(StarWarsContext);
+  const [click, setClick] = useState(false);
 
   const checkSelectOrder = document.querySelectorAll('input[name="sort"]');
 
@@ -97,13 +95,13 @@ export default function Form() {
   }, [filters]);
 
   const handleClickOrder = () => {
-    console.log('test sequence');
-    setSequence(order);
+    setClick(true);
   };
 
   useEffect(() => {
     setSearch(sortPlanets(search, order));
-  }, [sequence]);
+    setClick(false);
+  }, [click]);
 
   return (
     <>
@@ -178,7 +176,7 @@ export default function Form() {
         <label htmlFor="column">
           Coluna:
           <select
-            data-testid="column-order"
+            data-testid="column-sort"
             type="text"
             name="column"
             id="column"
@@ -196,6 +194,7 @@ export default function Form() {
             id="ascendente"
             name="sort"
             value="ASC"
+            data-testid="column-sort-input-asc"
             onChange={ handleChangeOrder }
           />
           Ascendente
@@ -206,6 +205,7 @@ export default function Form() {
             id="descendente"
             name="sort"
             value="DESC"
+            data-testid="column-sort-input-desc"
             onChange={ handleChangeOrder }
           />
           Descendente

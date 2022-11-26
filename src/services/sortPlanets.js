@@ -1,8 +1,15 @@
 export default function sortPlanets(arrPlanets, objOrder) {
-  if (objOrder.sort === 'ASC') {
-    const sorted = arrPlanets.sort((a, b) => a[objOrder.column] - b[objOrder.column]);
-    return sorted;
-  }
-  const sorted = arrPlanets.sort((a, b) => b[objOrder.column] - a[objOrder.column]);
-  return sorted;
+  const arrWithoutUnknown = arrPlanets
+    .filter((plnt) => plnt[objOrder.column] !== 'unknown');
+  const arrUnknowns = arrPlanets
+    .filter((plnt) => plnt[objOrder.column] === 'unknown');
+
+  const sorted = arrWithoutUnknown.sort((a, b) => (
+    objOrder.sort === 'ASC'
+      ? a[objOrder.column] - b[objOrder.column]
+      : b[objOrder.column] - a[objOrder.column]
+  ));
+
+  const newArr = [...sorted, ...arrUnknowns];
+  return newArr;
 }
