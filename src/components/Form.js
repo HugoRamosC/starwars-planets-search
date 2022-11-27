@@ -183,8 +183,8 @@ export default function Form() {
             value={ order.column }
             onChange={ handleChangeOrder }
           >
-            {columnOptions.map((opt, i) => (
-              <option key={ i } value={ opt }>{ opt }</option>
+            {columnOptions.map((opt) => (
+              <option key={ opt } value={ opt }>{ opt }</option>
             ))}
           </select>
         </label>
