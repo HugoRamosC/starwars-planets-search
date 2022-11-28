@@ -10,7 +10,6 @@ export default function StarWarsProvider({ children }) {
   const [search, setSearch] = useState([]);
   const [filters, setFilters] = useState([]);
   const [filteredByName, setFilteredByName] = useState([]);
-  const [isDisabled, setIsDisabled] = useState(false);
   const [inputs, setInputs] = useState({
     name: '',
     column: 'population',
@@ -55,8 +54,6 @@ export default function StarWarsProvider({ children }) {
     setFilters,
     filteredByName,
     setFilteredByName,
-    isDisabled,
-    setIsDisabled,
     columns,
     columnOptions,
     setColumnOptions,

@@ -14,8 +14,6 @@ export default function Form() {
     setFilters,
     filteredByName,
     setFilteredByName,
-    isDisabled,
-    setIsDisabled,
     columns,
     columnOptions,
     setColumnOptions,
@@ -63,7 +61,6 @@ export default function Form() {
   const handleClickClearAllFilters = () => {
     setFilteredByName(planets);
     setColumnOptions(columns);
-    setIsDisabled(false);
     setFilters([]);
     setInputs({
       name: '',
@@ -81,16 +78,14 @@ export default function Form() {
 
       if (optionsFiltered.length === 0) {
         setInputs({ ...inputs, column: columns[0] });
-        setIsDisabled(true);
       } else {
         setInputs({ ...inputs, column: optionsFiltered[0] });
-        setIsDisabled(false);
       }
     }
   };
 
   useEffect(() => { // atualiza o search (página) com os filtros por número
-    setSearch(filterByNumber(filteredByName, filters));
+    setSearch(filterByNumber(filteredByName, filters));// filteredByName necessário aqui.. verificar para fatorar
     filterOptions();
   }, [filters]);
 
@@ -165,7 +160,6 @@ export default function Form() {
           data-testid="button-filter"
           type="button"
           onClick={ handleClickAplyFilter }
-          disabled={ isDisabled }
         >
           Filtrar
         </button>
