@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import StarWarsContext from '../context/StarWarsContext';
 import { filterByName, filterByNumber } from '../services/filterPlanets';
 import sortPlanets from '../services/sortPlanets';
@@ -20,7 +20,7 @@ export default function Form() {
     order,
     setOrder,
   } = useContext(StarWarsContext);
-  const [click, setClick] = useState(false);
+  // const [click, setClick] = useState(false);
 
   const checkSelectOrder = document.querySelectorAll('input[name="sort"]');
 
@@ -73,13 +73,13 @@ export default function Form() {
   const filterOptions = () => {
     if (filters.length !== 0) {
       const aplyedFilters = filters.map((f) => f.column);
-      const optionsFiltered = columns.filter((opt) => !aplyedFilters.includes(opt));
-      setColumnOptions(optionsFiltered);
+      const optionsNotFiltered = columns.filter((opt) => !aplyedFilters.includes(opt));
+      setColumnOptions(optionsNotFiltered);
 
-      if (optionsFiltered.length === 0) {
+      if (optionsNotFiltered.length === 0) {
         setInputs({ ...inputs, column: columns[0] });
       } else {
-        setInputs({ ...inputs, column: optionsFiltered[0] });
+        setInputs({ ...inputs, column: optionsNotFiltered[0] });
       }
     }
   };
@@ -90,13 +90,13 @@ export default function Form() {
   }, [filters]);
 
   const handleClickOrder = () => {
-    setClick(true);
+    // setClick(true);
+    setSearch(sortPlanets(search, order));
   };
 
-  useEffect(() => {
-    setSearch(sortPlanets(search, order));
-    setClick(false);
-  }, [click]);
+  // useEffect(() => {
+  //   setClick(false);
+  // }, [click]);
 
   return (
     <>

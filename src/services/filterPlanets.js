@@ -6,28 +6,44 @@ export function filterByName(arrPlanets, objInput) {
 }
 
 export function filterByNumber(arrPlanets, arrFilters) {
-  let filteredByNumbers = arrPlanets;
+  // let filteredByNumbers = arrPlanets;
 
   // arrFilters corresponde ao array com os inputs (filtro com números)
   // percorre todos os filtros aplicados modificando o array de planetas
+  // arrFilters.forEach((fltr) => {
+  //   switch (fltr.comparison) {
+  //   case 'menor que':
+  //     filteredByNumbers = filteredByNumbers
+  //       .filter((plnt) => +plnt[fltr.column] < +fltr.value);
+  //     break;
+  //   case 'igual a':
+  //     filteredByNumbers = filteredByNumbers
+  //       .filter((plnt) => +plnt[fltr.column] === +fltr.value);
+  //     break;
+  //   default: // maior que
+  //     filteredByNumbers = filteredByNumbers
+  //       .filter((plnt) => +plnt[fltr.column] > +fltr.value);
+  //     break;
+  //   }
+  // });
+  // return filteredByNumbers;
+
+  // let fltrByNumbs = arrPlanets;
+
+  let fltrByNumbs = arrPlanets;
+
   arrFilters.forEach((fltr) => {
     switch (fltr.comparison) {
-    case 'maior que':
-      filteredByNumbers = filteredByNumbers
-        .filter((plnt) => +plnt[fltr.column] > +fltr.value);
-      break;
     case 'menor que':
-      filteredByNumbers = filteredByNumbers
-        .filter((plnt) => +plnt[fltr.column] < +fltr.value);
+      fltrByNumbs = fltrByNumbs.filter((plnt) => +plnt[fltr.column] < +fltr.value);
       break;
     case 'igual a':
-      filteredByNumbers = filteredByNumbers
-        .filter((plnt) => +plnt[fltr.column] === +fltr.value);
+      fltrByNumbs = fltrByNumbs.filter((plnt) => +plnt[fltr.column] === +fltr.value);
       break;
-    default:
-      filteredByNumbers = arrPlanets;
+    default: // maior que
+      fltrByNumbs = fltrByNumbs.filter((plnt) => +plnt[fltr.column] > +fltr.value);
       break;
     }
   });
-  return filteredByNumbers;
+  return fltrByNumbs;
 }
