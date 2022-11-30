@@ -84,6 +84,10 @@ export default function Form() {
     }
   };
 
+  // useEffect(() => {
+
+  // }, [inputs.column]);
+
   useEffect(() => { // atualiza o search (página) com os filtros por número
     setSearch(filterByNumber(filteredByName, filters));// filteredByName necessário aqui.. verificar para fatorar
     filterOptions();
