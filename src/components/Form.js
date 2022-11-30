@@ -20,16 +20,7 @@ export default function Form() {
     order,
     setOrder,
   } = useContext(StarWarsContext);
-  // const [click, setClick] = useState(false);
-
   const checkSelectOrder = document.querySelectorAll('input[name="sort"]');
-
-  // Preenche search e filteredByName com todos os planetas no carregamento da página
-  useEffect(() => {
-    setSearch(planets); // search que é renderizado
-    setFilteredByName(planets); // salva os planetas filtrados somente pelo nome
-    // setSequence(order);
-  }, [planets]);
 
   const handleChangeFilter = ({ target }) => {
     setInputs({ ...inputs, [target.name]: target.value });
@@ -38,15 +29,6 @@ export default function Form() {
   const handleChangeOrder = ({ target }) => {
     setOrder({ ...order, [target.name]: target.value });
   };
-
-  useEffect(() => {
-    if (inputs.name !== '') { // atualiza os states com o filtro por nome
-      setSearch(filterByName(search, inputs));
-      setFilteredByName(filterByName(search, inputs));
-    } else { // atualiza o search filtrando somente pelo números (caso haja filtro de número), quando apaga o input nome
-      setSearch(filterByNumber(planets, filters));
-    }
-  }, [inputs.name]);
 
   const handleClickAplyFilter = () => { // salva os inputs em um array para rodar o filtro por número & dispara o useEffect abaixo
     const arrFilters = [...filters, inputs];
@@ -60,7 +42,6 @@ export default function Form() {
 
   const handleClickClearAllFilters = () => {
     setFilteredByName(planets);
-    setColumnOptions(columns);
     setFilters([]);
     setInputs({
       name: '',
@@ -70,37 +51,48 @@ export default function Form() {
     });
   };
 
+  const handleClickOrder = () => {
+    setSearch(sortPlanets(search, order));
+  };
+
   const filterOptions = () => {
     if (filters.length !== 0) {
       const aplyedFilters = filters.map((f) => f.column);
       const optionsNotFiltered = columns.filter((opt) => !aplyedFilters.includes(opt));
       setColumnOptions(optionsNotFiltered);
-
-      if (optionsNotFiltered.length === 0) {
-        setInputs({ ...inputs, column: columns[0] });
-      } else {
-        setInputs({ ...inputs, column: optionsNotFiltered[0] });
-      }
+    } else {
+      setColumnOptions(columns);
     }
   };
 
-  // useEffect(() => {
+  // Preenche search e filteredByName com todos os planetas no carregamento da página
+  useEffect(() => {
+    setSearch(planets); // search que é renderizado
+    setFilteredByName(planets); // salva os planetas filtrados somente pelo nome
+    // setSequence(order);
+  }, [planets]);
 
-  // }, [inputs.column]);
+  useEffect(() => {
+    if (inputs.name !== '') { // atualiza os states com o filtro por nome
+      setSearch(filterByName(search, inputs));
+      setFilteredByName(filterByName(search, inputs));
+    } else { // atualiza o search filtrando somente pelo números (caso haja filtro de número), quando apaga o input nome
+      setSearch(filterByNumber(planets, filters));
+    }
+  }, [inputs.name]);
+
+  useEffect(() => {
+    if (columnOptions.length === 0) {
+      setInputs({ ...inputs, column: columns[0] });
+    } else {
+      setInputs({ ...inputs, column: columnOptions[0] });
+    }
+  }, [columnOptions]);
 
   useEffect(() => { // atualiza o search (página) com os filtros por número
     setSearch(filterByNumber(filteredByName, filters));// filteredByName necessário aqui.. verificar para fatorar
     filterOptions();
   }, [filters]);
-
-  const handleClickOrder = () => {
-    // setClick(true);
-    setSearch(sortPlanets(search, order));
-  };
-
-  // useEffect(() => {
-  //   setClick(false);
-  // }, [click]);
 
   return (
     <>
@@ -130,7 +122,7 @@ export default function Form() {
             onChange={ handleChangeFilter }
           >
             {columnOptions.map((opt, i) => (
-              <option key={ i } value={ opt }>{ opt }</option>
+              <option key={ i } value={ opt }>{opt}</option>
             ))}
           </select>
         </label>
@@ -182,7 +174,7 @@ export default function Form() {
             onChange={ handleChangeOrder }
           >
             {columnOptions.map((opt) => (
-              <option key={ opt } value={ opt }>{ opt }</option>
+              <option key={ opt } value={ opt }>{opt}</option>
             ))}
           </select>
         </label>
@@ -227,13 +219,13 @@ export default function Form() {
           Limpar Filtros & Ordem
         </button>
       </form>
-      { filters.length > 0
-      && filters.map((f) => (
-        <div key={ f.column } id={ f.column } data-testid="filter">
-          <button type="button" onClick={ handleClickDeleteFilter }>❌</button>
-          <span>{ `${f.column} ${f.comparison} ${f.value}` }</span>
-        </div>
-      ))}
+      {filters.length > 0
+        && filters.map((f) => (
+          <div key={ f.column } id={ f.column } data-testid="filter">
+            <button type="button" onClick={ handleClickDeleteFilter }>❌</button>
+            <span>{`${f.column} ${f.comparison} ${f.value}`}</span>
+          </div>
+        ))}
     </>
   );
 }

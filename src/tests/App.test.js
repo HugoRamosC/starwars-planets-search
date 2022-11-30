@@ -88,48 +88,18 @@ describe('Testa o componente Form', () => {
     expect(iptsColumn[0].children).toHaveLength(5);
   });
   test('04 - Testa a ordenação', async () => {
-    // global.fetch = (url) => {
-    //   return Promise.resolve({
-    //     json: () => Promise.resolve(testData)
-    //   })
-    // }
-    // // const sortPlanets = jest.fn().mockReturnValue(orderMock);
-    // render(<App />);
-
     const order = {
       column: 'surface_water',
       sort: 'DESC',
     }
-
     const funcOrder = sortPlanets(testData.results, order);
-
     expect(funcOrder[0].name).toBe('Hoth');
 
     const order2 = {
       column: 'surface_water',
       sort: 'ASC',
     }
-
     const funcOrder2 = sortPlanets(testData.results, order2);
-
     expect(funcOrder2[0].name).toBe('Bespin');
-
-  //   const comboboxes = screen.getAllByRole('combobox')
-  //   userEvent.selectOptions(comboboxes[2], 'surface_water')
-  //   // console.log(comboboxes[2]);
-    
-  //   await waitFor(() => {
-  //   userEvent.click(screen.getByRole('radio', { name: /descendente/i }));
-  //   userEvent.click(screen.getByRole('button', { name: /ordenar/i }));
-  //   // sortPlanets();
-  //   const planetName = screen.queryAllByTestId('planet-name');
-  //   console.log(planetName[0]);
-  // })
-  //   expect(planetName[0]).toHaveTextContent('Hoth')
-
-    // expect(sortPlanets).toBeCalled();
-    // expect(sortPlanets()).toBe(orderMock);
-    //   const table = screen.findAllByRole('cell')
-    //     // .getAllByTestId('planet-name')[0]).toHaveTextContent(/coruscant/i);
   });
 });
