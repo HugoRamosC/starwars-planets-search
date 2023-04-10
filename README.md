@@ -2,6 +2,8 @@
 
 [MEUS COMMITS](https://github.com/HugoRamosC/starwars-planets-search/commits)
 
+Aplicação que gera lista com filtros de planetas do universo de Star Wars usando Context API e Hooks para controlar os estados globais.
+
 Nesse projeto utilizei:
 
   * Context API do React para gerenciar estado.
